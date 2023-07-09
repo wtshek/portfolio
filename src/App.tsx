@@ -1,8 +1,10 @@
 import clsx from "clsx";
 import { Layout } from "./components/Layout";
-import { useEffect, useRef, useState } from "react";
+import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import Lenis from "@studio-freight/lenis";
 import { useInView } from "react-intersection-observer";
+
+const slogans = ["Crafting Dreams", "Developing Visions", "Inspiring Growth"];
 
 const theMeIWantToShow = ` A skilled software engineer with a passion to create product that
 brings excellent UI/UX and write code that is clean, efficient and
@@ -53,10 +55,13 @@ const menuItems = {
 };
 
 function App() {
-  const slogans = ["Crafting Dreams", "Developing Visions", "Inspiring Growth"];
+  const isDesktop = window.innerWidth >= 1023;
   const [isRevert, setIsRevert] = useState(false);
   const showTheRealMeRef = useRef(false);
-  const [maskSize, setMaskSize] = useState<number>(0);
+  const [maskSize, setMaskSize] = useState(isDesktop ? 300 : 0);
+  const [maskPosition, setMaskPosition] = useState<[number, number]>([
+    598, 183,
+  ]);
   const lenisRef = useRef(new Lenis());
   const homeContainerRef = useRef<HTMLSelectElement>(null);
   const aboutRef = useRef<HTMLSelectElement>(null);
@@ -79,20 +84,23 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setMaskSize((prev) => {
-        if (showTheRealMeRef.current && prev <= ABOUT_ME_MASK_IMAGE_MAX_SIZE)
-          return prev + ABOUT_ME_MASK_IMAGE_STEP;
+    let interval: ReturnType<typeof setInterval>;
+    if (window && !isDesktop) {
+      interval = setInterval(() => {
+        setMaskSize((prev) => {
+          if (showTheRealMeRef.current && prev <= ABOUT_ME_MASK_IMAGE_MAX_SIZE)
+            return prev + ABOUT_ME_MASK_IMAGE_STEP;
 
-        if (!showTheRealMeRef.current && prev > 0)
-          return prev - ABOUT_ME_MASK_IMAGE_STEP;
+          if (!showTheRealMeRef.current && prev > 0)
+            return prev - ABOUT_ME_MASK_IMAGE_STEP;
 
-        return prev;
-      });
-    }, INTERVAL);
+          return prev;
+        });
+      }, INTERVAL);
+    }
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isDesktop]);
 
   const onMenuItemClick = (id: string): void => {
     if (id === MENU_ITEM_KEYS.PROJECTS)
@@ -101,6 +109,12 @@ function App() {
       lenisRef.current.scrollTo(homeContainerRef.current);
     else if (id === MENU_ITEM_KEYS.ABOUT)
       lenisRef.current.scrollTo(aboutRef.current);
+  };
+
+  const onAboutSectionHover: MouseEventHandler<HTMLElement> = (e) => {
+    if (isDesktop) {
+      setMaskPosition([e.clientX - 270, e.clientY]);
+    }
   };
 
   return (
@@ -118,7 +132,7 @@ function App() {
           {slogans.map((sentence, index) => (
             <h1
               key={`slogan-${index}`}
-              className="flex flex-col text-3xl font-bold"
+              className="flex flex-col lg:flex-row text-3xl sm:text-5xl lg:text-[5rem] font-bold"
             >
               {sentence.split(" ").map((word, index) => (
                 <div
@@ -127,6 +141,7 @@ function App() {
                     "text-primary opacity-0 -translate-y-5 duration-700 transition-all will-change-transform":
                       index === 0,
                     "!opacity-100 !translate-y-0": index === 0 && isHomeInView,
+                    "lg:ml-4": index === 1,
                   })}
                 >
                   {word}
@@ -137,24 +152,33 @@ function App() {
         </div>
       </section>
       <section
-        className="mt-[48px] h-screen relative flex flex-col justify-center"
+        className="mt-[48px] h-screen relative flex flex-col justify-center hover:cursor-none"
         id="about"
         ref={aboutRef}
+        onMouseMove={onAboutSectionHover}
       >
         <h2 className="px-4 tracking-[8.4px]">ABOUT ME</h2>
         <div
           className="layer absolute text-black top-0 left-0 bg-primary px-4 flex flex-col justify-center w-full h-full"
-          style={{ ["--size" as string]: `${maskSize}px` }}
+          style={{
+            ["--size" as string]: `${maskSize}px`,
+            ["--x" as string]: `${maskPosition[0]}px`,
+            ["--y" as string]: `${maskPosition[1]}px`,
+          }}
         >
           <h2 className="tracking-[8.4px]">ABOUT ME</h2>
-          <div className="font-bold text-base mt-10">{theRealMe}</div>
+          <div className="font-bold text-base md:text-2xl lg:text-5xl mt-10">
+            {theRealMe}
+          </div>
         </div>
-        <div className={"font-bold mt-10 text-base px-4"}>
+        <div
+          className={"font-bold mt-10 text-base md:text-2xl lg:text-5xl px-4"}
+        >
           {theMeIWantToShow}
         </div>
         <button
           className={clsx(
-            "mt-4 rounded-lg border-secondary border-2 p-2 mx-4 w-fit z-30 absolute bottom-[150px]",
+            "mt-4 rounded-lg border-secondary border-2 p-2 mx-4 w-fit z-30 absolute bottom-[150px] lg:hidden",
             {
               "!border-black text-black": isRevert,
             }
@@ -179,7 +203,7 @@ function App() {
             <div
               key={project}
               className={clsx(
-                "p-2 text-primary bg-secondary clip-path-trapezoid font-bold text-base -scale-x-0 transition-transform duration-700 origin-left",
+                "p-2 text-primary bg-secondary clip-path-trapezoid font-bold text-base md:text-2xl xl:text-3xl -scale-x-0 transition-transform duration-700 origin-left",
                 {
                   "w-full": index === 0,
                   "w-[85%]": index === 1,
@@ -195,14 +219,14 @@ function App() {
       </section>
       <section className="h-screen px-4 flex flex-col justify-center">
         <h2 className="tracking-[8.4px]">MY MOTTO</h2>
-        <div className="text-3xl text-center font-bold mt-7">
+        <div className="text-3xl lg:text-5xl font-bold mt-7">
           Be Just <span className="text-primary">Good Enough</span> So We Can
           Focus On The <span className="text-primary">Importance</span>
         </div>
       </section>
       <section className="h-screen px-4 flex flex-col justify-center">
         <h2 className="tracking-[8.4px]">LET'S CONNECT</h2>
-        <div className="flex flex-col mt-7 font-bold text-3xl gap-2">
+        <div className="flex flex-col mt-7 font-bold text-3xl lg:text-5xl gap-2">
           {contacts.map((contact) => (
             <a key={contact.label} href={contact.href}>
               {contact.label}
