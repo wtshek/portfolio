@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .layer {
+    --y: 598.5234375px;
+    --x: 183.5px;
+    -webkit-mask-image: url("./assets/test-mask.svg");
+    mask-image: url("./assets/test-mask.svg");
+    background-color: "#FF6600";
+    -webkit-mask-repeat: no-repeat;
+    /* z-index: 5; */
+    -webkit-mask-origin: content-box;
+    -webkit-mask-size: var(--size), contain;
+    -webkit-mask-position: calc(var(--x) - var(--size) / 2)
+        calc(var(--y) - var(--size) / 2),
+      center;
+    transition: all;
+  }
+
+  .clip-path-trapezoid {
+    clip-path: polygon(0 0, 100% 0, 82% 100%, 0% 100%);
+  }
+}
