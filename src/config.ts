@@ -85,6 +85,6 @@ export const menuItems = {
     label: "RESUME",
     onClick: () => {
       window.open(resume);
-    }, //TODO: attach resume
+    },
   },
 };
