@@ -1,3 +1,4 @@
+import resume from "./assets/Software_Engineer_CV.pdf";
 import { BsLinkedin, BsGithub, BsInstagram } from "react-icons/bs";
 import { ProjectType } from "./components/ProjectModal";
 
@@ -83,7 +84,7 @@ export const menuItems = {
     id: "resume",
     label: "RESUME",
     onClick: () => {
-      console.log("on resume click");
+      window.open(resume);
     }, //TODO: attach resume
   },
 };

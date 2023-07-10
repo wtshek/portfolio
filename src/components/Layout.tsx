@@ -10,7 +10,6 @@ type LayoutProps = {
   };
   isRevert: boolean;
 };
-// TODO: add social media
 
 export const Layout: FC<LayoutProps> = ({
   children,
