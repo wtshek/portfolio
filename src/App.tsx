@@ -174,7 +174,7 @@ function App() {
         </div>
         <button
           className={clsx(
-            "mt-4 rounded-lg border-secondary border-2 p-2 mx-4 w-fit z-30 absolute bottom-[25%] lg:hidden",
+            "mt-4 rounded-lg border-secondary border-2 p-2 mx-4 w-fit absolute bottom-[25%] lg:hidden",
             {
               "!border-black text-black": isRevert,
             }

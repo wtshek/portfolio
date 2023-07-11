@@ -29,7 +29,10 @@ export const Layout: FC<LayoutProps> = ({
       >
         <div
           className={clsx(
-            "absolute bg-menuGradientDesktop top-0 w-full h-[150px] -z-10"
+            "absolute bg-menuGradientDesktop transition-opacity duration-1000 left-0 top-0 w-full h-[150px] -z-10",
+            {
+              "opacity-0": isRevert,
+            }
           )}
         />
         <div className="font-bold">
@@ -87,7 +90,7 @@ export const Layout: FC<LayoutProps> = ({
         </div>
         <div
           className={clsx(
-            "absolute bg-menuGradient w-full h-[150px] transition-opacity bottom-0 left-0 -z-10",
+            "absolute bg-menuGradient w-full h-[150px] transition-opacity duration-1000 bottom-0 left-0 -z-10",
             { "!opacity-0": isRevert }
           )}
         />
